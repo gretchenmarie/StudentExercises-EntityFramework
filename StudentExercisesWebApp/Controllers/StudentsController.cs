@@ -28,6 +28,7 @@ namespace StudentExercisesWebApp.Controllers
         }
 
         // GET: Students/Details/5
+        //id is the route-the ? near the int allows it to be null
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,7 +37,11 @@ namespace StudentExercisesWebApp.Controllers
             }
 
             var student = await _context.Students
+                //matches up the cohort and student
+                //join statement in sql
                 .Include(s => s.Cohort)
+                //grabs the first one that matches the id
+                //in the lambda expression is a WHERE from sql
                 .FirstOrDefaultAsync(m => m.StudentId == id);
             if (student == null)
             {
@@ -49,7 +54,7 @@ namespace StudentExercisesWebApp.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
+            
             CreateStudentViewModel model = new CreateStudentViewModel(_context);
             return View(model);
         }
@@ -62,9 +67,10 @@ namespace StudentExercisesWebApp.Controllers
         public async Task<IActionResult> Create(CreateStudentViewModel model)
         {
             if (ModelState.IsValid)
-            {
+            { //goes to database-please add student
                 _context.Add(model.Student);
-
+                //for each student add the students exercises-contains the ids of the exercises
+                //for each id we put in the join table for exercises is joined wit hthat student
                 foreach (int exerciseId in model.SelectedExercises)
                 {
                     StudentExercise newSE = new StudentExercise()
@@ -72,9 +78,14 @@ namespace StudentExercisesWebApp.Controllers
                         StudentId = model.Student.StudentId,
                         ExerciseId = exerciseId
                     };
+                    //last step added to databse
+                    //inserting the joiner table-shown above with studentid and exercise id
                     _context.Add(newSE);
                 }
+                //add says I WANT to insert this int othe data base-and as soon as I call save changes it is 
+                //actually entered into the database-similar to write changes in DB broswer
                 await _context.SaveChangesAsync();
+                //redirects you to the index html
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name", model.Student.CohortId);
