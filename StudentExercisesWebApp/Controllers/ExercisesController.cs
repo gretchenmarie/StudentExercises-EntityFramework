@@ -38,7 +38,7 @@ namespace StudentExercisesWebApp.Controllers
             var exercise = await _context.Exercises
                 //.Include(s => s.Cohort)
                 .Include(e => e.StudentExercises)
-                    .ThenInclude(se => se.Exercise)
+                    .ThenInclude(se => se.Student)
                 //.Include("StudentExercises.Exercise")
                 .FirstOrDefaultAsync(e => e.ExerciseId == id);
 
@@ -51,6 +51,16 @@ namespace StudentExercisesWebApp.Controllers
         }
 
         // GET: Exercises/Create
+        public IActionResult Create()
+        {
+            CreateExerciseViewModel model = new CreateExerciseViewModel(_context);
+            return View(model);
+        }
+
+        // POST: Exercises/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateExerciseViewModel model)
@@ -59,12 +69,12 @@ namespace StudentExercisesWebApp.Controllers
             {
                 _context.Add(model.Exercise);
 
-                foreach (int studentId in model.SelectedStudents)
+                foreach (int StudentId in model.SelectedStudents)
                 {
                     StudentExercise newSE = new StudentExercise()
                     {
-                        ExerciseId = model.Exercise.ExerciseId,
-                        StudentId = studentId
+                       ExerciseId = model.Exercise.ExerciseId,
+                        StudentId = StudentId
                     };
                     _context.Add(newSE);
                 }
@@ -72,22 +82,6 @@ namespace StudentExercisesWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
-        }
-
-        // POST: Exercises/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExerciseId,Name,Language")] Exercise exercise)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(exercise);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(exercise);
         }
 
         // GET: Exercises/Edit/5

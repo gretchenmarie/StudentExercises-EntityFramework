@@ -12,7 +12,8 @@ namespace StudentExercisesWebApp.Models.ViewModels
         
             public Exercise Exercise { get; set; }
             public List<SelectListItem> AvailableStudents { get; private set; }
-        [Display(Name = "Select Student")]
+
+            [Display(Name = "Select Student")]
             public List<int> SelectedStudents { get; set; }
            // public List<SelectListItem> Cohorts { get; set; }
 
@@ -23,6 +24,7 @@ namespace StudentExercisesWebApp.Models.ViewModels
                 AvailableStudents = AllStudents.Select(li => new SelectListItem()
                 {
                     Text = li.FirstName,
+                   
                     Value = li.StudentId.ToString()
                 }).ToList();
 
