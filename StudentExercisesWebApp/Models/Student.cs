@@ -19,6 +19,15 @@ namespace StudentExercisesWebApp.Models
         [Required]
         public string LastName { get; set; }
 
+        public string FullName
+        {
+            get
+            {
+                var student = FirstName + " " + LastName;
+                return student;
+            }
+        }
+
         [Display(Name = "Student's Cohort")]
         [Required(ErrorMessage ="Please select a corhort")]
         public int CohortId { get; set; }

@@ -23,7 +23,7 @@ namespace StudentExercisesWebApp.Models.ViewModels
                 List<Student> AllStudents = ctx.Students.ToList();
                 AvailableStudents = AllStudents.Select(li => new SelectListItem()
                 {
-                    Text = li.FirstName,
+                    Text = li.FullName,
                    
                     Value = li.StudentId.ToString()
                 }).ToList();
